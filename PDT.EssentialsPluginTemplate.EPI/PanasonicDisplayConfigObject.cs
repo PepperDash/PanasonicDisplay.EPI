@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Crestron.SimplSharp;
 
-namespace EssentialsPluginTemplateEPI
+namespace PDT.PanasonicDisplay.EPI
 {
-	public class EssentialsPluginTemplateConfigObject
+	public class PanasonicDisplayConfigObject
 	{
 	}
 }
