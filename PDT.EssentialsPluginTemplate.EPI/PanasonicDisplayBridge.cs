@@ -7,6 +7,7 @@ using Crestron.SimplSharpPro.DeviceSupport;
 using PepperDash.Core;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Bridges;
+using Newtonsoft.Json;
 
 namespace PDT.PanasonicDisplay.EPI
 {
@@ -16,13 +17,21 @@ namespace PDT.PanasonicDisplay.EPI
 
 		public static void LinkToApiExt(this PdtPanasonicDisplay displayDevice, BasicTriList trilist, uint joinStart, string joinMapKey)
 		{
-
+			/*
 				var joinMap = JoinMapHelper.GetJoinMapForDevice(joinMapKey) as DisplayControllerJoinMap;
 
 				if (joinMap == null)
 				{
 					joinMap = new DisplayControllerJoinMap();
 				}
+			*/
+
+				DisplayControllerJoinMap joinMap = new DisplayControllerJoinMap();
+
+				var JoinMapSerialized = JoinMapHelper.GetJoinMapForDevice(joinMapKey);
+
+				if (!string.IsNullOrEmpty(JoinMapSerialized))
+					joinMap = JsonConvert.DeserializeObject<DisplayControllerJoinMap>(JoinMapSerialized);
 
 				joinMap.OffsetJoinNumbers(joinStart);
 
