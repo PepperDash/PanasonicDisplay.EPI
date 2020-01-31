@@ -32,6 +32,8 @@ namespace PDT.PanasonicDisplay.EPI
 			PepperDash.Essentials.Core.DeviceFactory.AddFactoryForType("panasonicdisplay", PdtPanasonicDisplay.BuildDevice);
 		}
 
+        public static string MinimumEssentialsFrameworkVersion = "1.4.23";
+
 		public static PdtPanasonicDisplay BuildDevice(DeviceConfig dc)
 		{
 			var config = JsonConvert.DeserializeObject<DeviceConfig>(dc.Properties.ToString());
