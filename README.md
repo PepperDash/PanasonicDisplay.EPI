@@ -14,7 +14,7 @@ This is an example of an Essentials Plugin for a Panasonic Display.
 
 ## Dependencies
 
-The [Essentials](https://github.com/PepperDash/Essentials) application is required.  It is referenced as a submodule and will be automatically checked out when cloning this repo if set to recurse submodules.  This allows different builds of the Essentials application to be reference by checking out the desired submodule commit.
+The [Essentials](https://github.com/PepperDash/Essentials) application is required.  It is referenced as a submodule and will be automatically checked out when cloning this repo if set to recurse submodules.  This allows different builds of the Essentials application to be referenced by checking out the desired submodule commit.
 
  ## Documentation
  For detailed documentation about how Plugins work, see the Wiki [article](https://github.com/PepperDash/Essentials/wiki/Plugins).
