@@ -102,6 +102,7 @@
     <Compile Include="PanasonicDisplay.cs" />
     <Compile Include="PanasonicDisplayBridge.cs" />
     <Compile Include="PanasonicDisplayConfigObject.cs" />
+    <Compile Include="PluginFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>

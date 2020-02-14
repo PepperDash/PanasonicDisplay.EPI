@@ -15,7 +15,7 @@ namespace PDT.PanasonicDisplay.EPI
 	{
 
 
-		public static void LinkToApiExt(this PdtPanasonicDisplay displayDevice, BasicTriList trilist, uint joinStart, string joinMapKey)
+		public static void LinkToApiExt(this PanasonicDisplay displayDevice, BasicTriList trilist, uint joinStart, string joinMapKey)
 		{
 
 				DisplayControllerJoinMap joinMap = new DisplayControllerJoinMap();

@@ -25,30 +25,38 @@ using PepperDash.Essentials.Bridges;
 
 namespace PDT.PanasonicDisplay.EPI
 {
-	public class PdtPanasonicDisplay : TwoWayDisplayBase, IBasicVolumeWithFeedback, ICommunicationMonitor, IBridge
+    /// <summary>
+    /// 
+    /// </summary>
+	public class PanasonicDisplay : TwoWayDisplayBase, IBasicVolumeWithFeedback, ICommunicationMonitor, IBridge
 	{
-		public static void LoadPlugin()
-		{
-			PepperDash.Essentials.Core.DeviceFactory.AddFactoryForType("panasonicdisplay", PdtPanasonicDisplay.BuildDevice);
-		}
-
-        public static string MinimumEssentialsFrameworkVersion = "1.4.23";
-
-		public static PdtPanasonicDisplay BuildDevice(DeviceConfig dc)
-		{
-			var config = JsonConvert.DeserializeObject<DeviceConfig>(dc.Properties.ToString());
-			var newMe = new PdtPanasonicDisplay(dc.Key, dc.Name, dc);
-			return newMe;
-		}
-
-
+        /// <summary>
+        /// The communication device
+        /// </summary>
 		public IBasicCommunication Communication { get; private set; }
-		public CommunicationGather PortGather { get; private set; }
+
+        /// <summary>
+        /// This class will gather RX data until it finds the specified delimiter.
+        /// It then fires an event that contains the entire captured string.
+        /// </summary>
+        CommunicationGather PortGather;
+
+        /// <summary>
+        /// Stores the device configuration 
+        /// </summary>
+        public DeviceConfig Config { get; private set; }
+
+        /// <summary>
+        /// Monitors communication with device
+        /// </summary>
 		public StatusMonitorBase CommunicationMonitor { get; private set; }
 
-		public int InputNumber;
+		int InputNumber;
+        /// <summary>
+        /// The current selected input number
+        /// </summary>
 		public IntFeedback InputNumberFeedback;
-		public static List<string> InputKeys = new List<string>();
+		static List<string> InputKeys = new List<string>();
 
 		#region Command constants
 		public const string InputGetCmd = "\x02QMI\x03";
@@ -105,32 +113,29 @@ namespace PDT.PanasonicDisplay.EPI
 		/// <summary>
 		/// Constructor for IBasicCommunication
 		/// </summary>
-		public PdtPanasonicDisplay(string key, string name, DeviceConfig config)
+		public PanasonicDisplay(string key, string name, IBasicCommunication comm, DeviceConfig config)
 			: base(key, name)
 		{
-			Communication = CommFactory.CreateCommForDevice(config);
+            Config = config; 
+
+            Communication = comm;
 
 			Init();
 		}
 
-
-		/// <summary>
-		/// Constructor for COM
-		/// </summary>
-		/*
-		public PdtPanasonicDisplay(string key, string name, ComPort port, ComPort.ComPortSpec spec)
-			: base(key, name)
-		{
-			Communication = new ComPortController(key + "-com", port, spec);
-			Init();
-		}
-		*/
+        /// <summary>
+        /// Intial logic to set up instance
+        /// </summary>
 		void Init()
 		{
+            // Will gather to the specified delimiter
 			PortGather = new CommunicationGather(Communication, '\x03');
 			PortGather.LineReceived += this.Port_LineReceived;
-			CommunicationMonitor = new GenericCommunicationMonitor(this, Communication, 30000, 120000, 300000, "\x02QPW\x03\x02QMI\x03"); // Query Power
 			
+            // Constuct the CommunicationMonitor
+            CommunicationMonitor = new GenericCommunicationMonitor(this, Communication, 30000, 120000, 300000, "\x02QPW\x03\x02QMI\x03"); // Query Power
+			
+            // Define the input ports 
 			InputPorts.Add(new RoutingInputPort(RoutingPortNames.HdmiIn1, eRoutingSignalType.Audio | eRoutingSignalType.Video,
 				eRoutingPortConnectionType.Hdmi, new Action(InputHdmi1), this));
 			InputPorts.Add(new RoutingInputPort(RoutingPortNames.HdmiIn2, eRoutingSignalType.Audio | eRoutingSignalType.Video,
@@ -140,60 +145,51 @@ namespace PDT.PanasonicDisplay.EPI
 			InputPorts.Add(new RoutingInputPort(RoutingPortNames.VgaIn, eRoutingSignalType.Audio | eRoutingSignalType.Video,
 				eRoutingPortConnectionType.Vga, new Action(InputVga), this));
 
-
+            // Define the feedback Funcs
 			VolumeLevelFeedback = new IntFeedback(() => { return _VolumeLevel; });
 			MuteFeedback = new BoolFeedback(() => _IsMuted);
 			InputNumberFeedback = new IntFeedback(() => { Debug.Console(2, this, "CHange Input number {0}", InputNumber); return InputNumber; });
 				
-
-			//    new BoolCueActionPair(CommonBoolCue.Menu, b => { if(b) Send(MenuIrCmd); }),
-			//    new BoolCueActionPair(CommonBoolCue.Up, b => { if(b) Send(UpIrCmd); }),
-			//    new BoolCueActionPair(CommonBoolCue.Down, b => { if(b) Send(DownIrCmd); }),
-			//    new BoolCueActionPair(CommonBoolCue.Left, b => { if(b) Send(LeftIrCmd); }),
-			//    new BoolCueActionPair(CommonBoolCue.Right, b => { if(b) Send(RightIrCmd); }),
-			//    new BoolCueActionPair(CommonBoolCue.Select, b => { if(b) Send(SelectIrCmd); }),
-			//    new BoolCueActionPair(CommonBoolCue.Exit, b => { if(b) Send(ExitIrCmd); }),
-
-			//};
+            // Set the warmup time
 			WarmupTime = 17000;
 		}
 
-		~PdtPanasonicDisplay()
+		~PanasonicDisplay()
 		{
 			PortGather = null;
 		}
 
+        /// <summary>
+        /// This will run during the Activation phase
+        /// </summary>
+        /// <returns></returns>
 		public override bool CustomActivate()
 		{
 			Communication.Connect();
 
 			CommunicationMonitor.StatusChange += (o, a) => { Debug.Console(2, this, "Communication monitor state: {0}", CommunicationMonitor.Status); };
 			CommunicationMonitor.Start();
-			return true;
+
+            // Call the base method in case any steps need to happen there
+            return base.CustomActivate();
 		}
 
+        /// <summary>
+        /// Adds a routing port to the InputPorts collection
+        /// </summary>
+        /// <param name="port">port to add</param>
+        /// <param name="fbMatch">matching response</param>
 		void AddRoutingInputPort(RoutingInputPort port, string fbMatch)
 		{
 			port.FeedbackMatchObject = fbMatch;
 			InputPorts.Add(port);
 		}
 
-		/*
-		public override FeedbackCollection<Feedback> Feedbacks
-		{
-			get
-			{
-				var list = base.Feedbacks;
-				
-				list.AddRange(new list<Feedback>
-				{
-
-				});
-				return list;
-			}
-		}
-		*/
-
+        /// <summary>
+        /// This method will run when the PortGather is satisfied.  Parse responses here.
+        /// </summary>
+        /// <param name="dev"></param>
+        /// <param name="args"></param>
 		void Port_LineReceived(object dev, GenericCommMethodReceiveTextArgs args)
 		{
 			if (Debug.Level == 2)
@@ -272,6 +268,10 @@ namespace PDT.PanasonicDisplay.EPI
 			}
 		}
 
+        /// <summary>
+        /// Sends data to the device
+        /// </summary>
+        /// <param name="s"></param>
 		void Send(string s)
 		{
 			if (Debug.Level == 2)
@@ -279,7 +279,9 @@ namespace PDT.PanasonicDisplay.EPI
 			Communication.SendText(s);
 		}
 
-
+        /// <summary>
+        /// Power on the display
+        /// </summary>
 		public override void PowerOn()
 		{
 			Send(PowerOnCmd);
@@ -298,6 +300,9 @@ namespace PDT.PanasonicDisplay.EPI
 			}
 		}
 
+        /// <summary>
+        /// Power off the display
+        /// </summary>
 		public override void PowerOff()
 		{
 			// If a display has unreliable-power off feedback, just override this and
@@ -319,6 +324,9 @@ namespace PDT.PanasonicDisplay.EPI
 			}
 		}
 
+        /// <summary>
+        /// Toggle the display power
+        /// </summary>
 		public override void PowerToggle()
 		{
 			if (PowerIsOnFeedback.BoolValue && !IsWarmingUpFeedback.BoolValue)
@@ -327,12 +335,18 @@ namespace PDT.PanasonicDisplay.EPI
 				PowerOn();
 		}
 
+        /// <summary>
+        /// Set the input to Hdmi1
+        /// </summary>
 		public void InputHdmi1()
 		{
 			Send(Hdmi1Cmd);
 			Send(PollInput);
 		}
 
+        /// <summary>
+        /// Set the input to Hdmi2
+        /// </summary>
 		public void InputHdmi2()
 		{
 
@@ -340,6 +354,9 @@ namespace PDT.PanasonicDisplay.EPI
 			Send(PollInput);
 		}
 
+        /// <summary>
+        /// Set the input to Hdmi3
+        /// </summary>
 		public void InputHdmi3()
 		{
 
@@ -347,48 +364,77 @@ namespace PDT.PanasonicDisplay.EPI
 			Send(PollInput);
 		}
 
+        /// <summary>
+        /// Set the input to Hdmi4
+        /// </summary>
 		public void InputHdmi4()
 		{
 			Send(Hdmi4Cmd);
 			Send(PollInput);
 		}
 
+
+        /// <summary>
+        /// Set the input to DP1
+        /// </summary>
 		public void InputDisplayPort1()
 		{
 			Send(Dp1Cmd);
 			Send(PollInput);
 		}
 
+        /// <summary>
+        /// Set the input to DP2
+        /// </summary>
 		public void InputDisplayPort2()
 		{
 			Send(Dp2Cmd);
 			Send(PollInput);
 		}
 
+
+        /// <summary>
+        /// Set the input to DVI1
+        /// </summary>
 		public void InputDvi1()
 		{
 			Send(Dvi1Cmd);
 			Send(PollInput);
 		}
 
+
+        /// <summary>
+        /// Set the input to Video1
+        /// </summary>
 		public void InputVideo1()
 		{
 			Send(Video1Cmd);
 			Send(PollInput);
 		}
 
+
+        /// <summary>
+        /// Set the input to VGA
+        /// </summary>
 		public void InputVga()
 		{
 			Send(VgaCmd);
 			Send(PollInput);
 		}
 
+        /// <summary>
+        /// Set the input to RGB
+        /// </summary>
 		public void InputRgb()
 		{
 			Send(RgbCmd); 
 			Send(PollInput);
 		}
 
+        /// <summary>
+        /// Executes an input switch
+        /// </summary>
+        /// <param name="selector"></param>
 		public override void ExecuteSwitch(object selector)
 		{
 			if (!_PowerIsOn)
@@ -411,9 +457,13 @@ namespace PDT.PanasonicDisplay.EPI
 				else
 					Debug.Console(1, this, "WARNING: ExecuteSwitch cannot handle type {0}", selector.GetType());
 
-			}//Send((string)selector);
+			}
 		}
 
+        /// <summary>
+        /// Set the volume level
+        /// </summary>
+        /// <param name="level">level to set</param>
 		void SetVolume(ushort level)
 		{
 			var levelString = string.Format("{0}{1:X3}\x03", VolumeLevelPartialCmd, level);
@@ -425,18 +475,34 @@ namespace PDT.PanasonicDisplay.EPI
 
 		#region IBasicVolumeWithFeedback Members
 
+        /// <summary>
+        /// Provides feedback of current volume level
+        /// </summary>
 		public IntFeedback VolumeLevelFeedback { get; private set; }
 
+        /// <summary>
+        /// Provides feedback of current mute state
+        /// </summary>
 		public BoolFeedback MuteFeedback { get; private set; }
 
+        /// <summary>
+        /// Unmutes the display
+        /// </summary>
 		public void MuteOff()
 		{
 			Send(MuteOffCmd);
+            _IsMuted = true;
+            MuteFeedback.FireUpdate();
 		}
 
+        /// <summary>
+        /// Mutes the display
+        /// </summary>
 		public void MuteOn()
 		{
 			Send(MuteOnCmd);
+            _IsMuted = false;
+            MuteFeedback.FireUpdate();
 		}
 
 		void IBasicVolumeWithFeedback.SetVolume(ushort level)
@@ -453,25 +519,33 @@ namespace PDT.PanasonicDisplay.EPI
 			Send(MuteToggleIrCmd);
 		}
 
+        /// <summary>
+        /// Decrements the volume level
+        /// </summary>
+        /// <param name="pressRelease"></param>
 		public void VolumeDown(bool pressRelease)
 		{
-			//throw new NotImplementedException();
-			//#warning need incrementer for these
-			SetVolume(_VolumeLevel++);
-		}
-
-		public void VolumeUp(bool pressRelease)
-		{
-			//throw new NotImplementedException();
 			SetVolume(_VolumeLevel--);
 		}
 
-
-
+        /// <summary>
+        /// Increments the volume level
+        /// </summary>
+        /// <param name="pressRelease"></param>
+		public void VolumeUp(bool pressRelease)
+		{
+			SetVolume(_VolumeLevel++);
+		}
 
 		#endregion
 		#region IBridge Members
 
+        /// <summary>
+        /// Calls the extension method to bridge the device to an EiscApi class (SIMPL Bridge)
+        /// </summary>
+        /// <param name="trilist"></param>
+        /// <param name="joinStart"></param>
+        /// <param name="joinMapKey"></param>
 		public void LinkToApi(BasicTriList trilist, uint joinStart, string joinMapKey)
 		{
 			this.LinkToApiExt(trilist, joinStart, joinMapKey);
