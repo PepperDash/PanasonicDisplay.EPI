@@ -7,6 +7,7 @@ using Crestron.SimplSharp;
 using Newtonsoft.Json;
 
 using PepperDash.Core;
+using PepperDash.Essentials.Core;
 
 namespace PDT.PanasonicDisplay.EPI
 {
@@ -19,7 +20,7 @@ namespace PDT.PanasonicDisplay.EPI
         /// Contains the necessary properties to communicate with the device
         /// </summary>
         [JsonProperty("control", Required = Required.Always)]
-        ControlPropertiesConfig Control { get; set; }
+        EssentialsControlPropertiesConfig Control { get; set; }
 
         // Add any additional custom properties here
 	}
