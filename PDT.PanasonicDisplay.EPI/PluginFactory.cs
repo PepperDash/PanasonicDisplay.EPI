@@ -10,31 +10,29 @@ using PepperDash.Essentials.Core.Config;
 
 using Newtonsoft.Json;
 
-
-
 namespace PDT.PanasonicDisplay.EPI
 {
-    public class PluginFactory
+    /// <summary>
+    /// This class is responsible for defining the minimum requirements of the plugin and define the necessary requirement for Essentails to load this plugin.
+    /// </summary>
+    public class PanasonicDisplayFactory : EssentialsPluginDeviceFactory<PanasonicDisplay>
     {
         /// <summary>
         /// Load the types to the factory
         /// </summary>
-        public static void LoadPlugin()
+        public PanasonicDisplayFactory()
         {
-            PepperDash.Essentials.Core.DeviceFactory.AddFactoryForType("panasonicdisplay", PluginFactory.BuildDevice);
-        }
+            MinimumEssentialsFrameworkVersion = "1.5.0";
 
-        /// <summary>
-        /// Must use this version of Essentials as minimum
-        /// </summary>
-        public static string MinimumEssentialsFrameworkVersion = "1.4.32";
+             TypeNames = new List<string>() {"panasonicDisplay", "panasonicThDisplay"};
+        }
 
         /// <summary>
         /// Builds an instance of the device and returns it
         /// </summary>
         /// <param name="dc">Device Configuration</param>
         /// <returns>Instance of Device</returns>
-        public static PanasonicDisplay BuildDevice(DeviceConfig dc)
+        public override EssentialsDevice BuildDevice(DeviceConfig dc)
         {
             var comm = CommFactory.CreateCommForDevice(dc);
 
