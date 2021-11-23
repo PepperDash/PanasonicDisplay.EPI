@@ -94,6 +94,11 @@ namespace PDT.PanasonicDisplay.EPI
 		public const string SelectIrCmd = "";
 		public const string ExitIrCmd = "";
 
+		public const string VideoMuteOnCmd = "\02VMT:1\03";
+		public const string VideoMuteOffCmd = "\02VMT:0\03";
+		public const string VideoMutePartialCmd = "\x02VMT:";
+		public const string VideoMutePoll = "\02QVM\03";
+
 		public const string PollInput = "\x02QMI\x03";
 		#endregion
 
@@ -102,7 +107,21 @@ namespace PDT.PanasonicDisplay.EPI
 		bool _IsCoolingDown;
 		ushort _VolumeLevel;
 		bool _IsMuted;
-		
+
+		bool _VideoIsMuted;
+		public bool VideoIsMuted
+		{
+			get
+			{
+				return _VideoIsMuted;
+			}
+			set
+			{
+				_VideoIsMuted = value;
+
+			}
+		}
+		public BoolFeedback VideoIsMutedFeedback;
 
 		protected override Func<bool> PowerIsOnFeedbackFunc { get { return () => _PowerIsOn; } }
 		protected override Func<bool> IsCoolingDownFeedbackFunc { get { return () => _IsCoolingDown; } }
@@ -150,7 +169,8 @@ namespace PDT.PanasonicDisplay.EPI
 			VolumeLevelFeedback = new IntFeedback(() => { return _VolumeLevel; });
 			MuteFeedback = new BoolFeedback(() => _IsMuted);
 			InputNumberFeedback = new IntFeedback(() => { Debug.Console(2, this, "CHange Input number {0}", InputNumber); return InputNumber; });
-				
+			VideoIsMutedFeedback = new BoolFeedback(() => { return VideoIsMuted; });
+
             // Set the warmup time
 			WarmupTime = 17000;
 		}
@@ -264,6 +284,16 @@ namespace PDT.PanasonicDisplay.EPI
 							InputNumber = 4;
 							InputNumberFeedback.FireUpdate();
 						}
+						break;
+					}
+				case "QVM:1":
+					{
+						VideoIsMuted = true;
+						break;
+					}
+				case "QVM:0":
+					{
+						VideoIsMuted = false;
 						break;
 					}
 			}
@@ -473,6 +503,30 @@ namespace PDT.PanasonicDisplay.EPI
 			_VolumeLevel = level;
 			VolumeLevelFeedback.FireUpdate();
 		}
+		public void VideoMuteOff()
+		{
+			Send(VideoMuteOffCmd);
+			Send(VideoMutePoll);
+		}
+
+		public void VideoMuteOn()
+		{
+			Send(VideoMuteOnCmd);
+			Send(VideoMutePoll);
+		}
+
+		public void VideoMuteToggle()
+		{
+			if (VideoIsMuted)
+			{
+				VideoMuteOff();
+			}
+			else
+			{
+				VideoMuteOn();
+			}
+		}
+
 
 		#region IBasicVolumeWithFeedback Members
 
@@ -549,12 +603,12 @@ namespace PDT.PanasonicDisplay.EPI
         /// <param name="joinMapKey"></param>
 		public void LinkToApi(BasicTriList trilist, uint joinStart, string joinMapKey, EiscApiAdvanced bridge)
 		{
-            DisplayControllerJoinMap joinMap = new DisplayControllerJoinMap(joinStart, typeof(DisplayControllerJoinMap));
+			PanasonicDisplayJoinMap joinMap = new PanasonicDisplayJoinMap(joinStart);
 
             var JoinMapSerialized = JoinMapHelper.GetJoinMapForDevice(joinMapKey);
 
             if (!string.IsNullOrEmpty(JoinMapSerialized))
-                joinMap = JsonConvert.DeserializeObject<DisplayControllerJoinMap>(JoinMapSerialized);
+				joinMap = JsonConvert.DeserializeObject<PanasonicDisplayJoinMap>(JoinMapSerialized);
 
             if (bridge != null)
             {
@@ -652,6 +706,13 @@ namespace PDT.PanasonicDisplay.EPI
                     volumeDisplayWithFeedback.MuteFeedback.LinkInputSig(trilist.BooleanInput[joinMap.VolumeMute.JoinNumber]);
                 }
             }
+			trilist.SetSigTrueAction(joinMap.VideoMuteOff.JoinNumber, () => this.VideoMuteOff());
+			trilist.SetSigTrueAction(joinMap.VideoMuteOn.JoinNumber, () => this.VideoMuteOn());
+			trilist.SetSigTrueAction(joinMap.VideoMuteToggle.JoinNumber, () => this.VideoMuteToggle());
+			VideoIsMutedFeedback.LinkInputSig(trilist.BooleanInput[joinMap.VideoMuteOn.JoinNumber]);
+			VideoIsMutedFeedback.LinkComplementInputSig(trilist.BooleanInput[joinMap.VideoMuteOff.JoinNumber]);
+			VideoIsMutedFeedback.LinkInputSig(trilist.BooleanInput[joinMap.VideoMuteToggle.JoinNumber]);
+
 		}
 
         void CurrentInputFeedback_OutputChange(object sender, FeedbackEventArgs e)
