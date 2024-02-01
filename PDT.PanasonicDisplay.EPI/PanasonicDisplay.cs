@@ -61,8 +61,8 @@ namespace PDT.PanasonicDisplay.EPI
 
 		#region Command constants
 		public const string InputGetCmd = "\x02QMI\x03";
-		public const string Hdmi1Cmd = "\x02IMS:HM1\x03";
-		public const string Hdmi2Cmd = "\x02IMS:HM2\x03";
+		public const string Hdmi1Cmd = "\x02IMS:SL1\x03";
+		public const string Hdmi2Cmd = "\x02IMS:SL2\x03";
 		public const string Hdmi3Cmd = "";
 		public const string Hdmi4Cmd = "";
 		public const string Dp1Cmd = "";
@@ -658,14 +658,15 @@ namespace PDT.PanasonicDisplay.EPI
 
             PowerIsOnFeedback.LinkInputSig(trilist.BooleanInput[joinMap.PowerOn.JoinNumber]);
 
-            int count = 1;
+            int count = 0;
             var displayBase = this as PepperDash.Essentials.Core.DisplayBase;
             foreach (var input in InputPorts)
             {
                 //displayDevice.InputKeys.Add(input.Key.ToString());
                 //var tempKey = InputKeys.ElementAt(count - 1);
-                trilist.SetSigTrueAction((ushort)(joinMap.InputSelectOffset.JoinNumber + count), () => { ExecuteSwitch(InputPorts[input.Key.ToString()].Selector); });
-                Debug.Console(2, this, "Setting Input Select Action on Digital Join {0} to Input: {1}", joinMap.InputSelectOffset.JoinNumber + count, InputPorts[input.Key.ToString()].Key.ToString());
+                var port = InputPorts[input.Key.ToString()];
+                trilist.SetSigTrueAction((ushort)(joinMap.InputSelectOffset.JoinNumber + count), () => { ExecuteSwitch(port.Selector); });
+                Debug.Console(2, this, "Setting Input Select Action on Digital Join {0} to Input: {1}", joinMap.InputSelectOffset.JoinNumber + count, port.Key.ToString());
                 trilist.StringInput[(ushort)(joinMap.InputNamesOffset.JoinNumber + count)].StringValue = input.Key.ToString();
                 count++;
             }
