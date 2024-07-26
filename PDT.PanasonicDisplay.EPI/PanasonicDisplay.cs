@@ -61,8 +61,8 @@ namespace PDT.PanasonicDisplay.EPI
 
 		#region Command constants
 		public const string InputGetCmd = "\x02QMI\x03";
-		public const string Hdmi1Cmd = "\x02IMS:SL1\x03";
-		public const string Hdmi2Cmd = "\x02IMS:SL2\x03";
+		public const string Hdmi1Cmd = "\x02IMS:HM1\x03";
+		public const string Hdmi2Cmd = "\x02IMS:HM2\x03";
 		public const string Hdmi3Cmd = "";
 		public const string Hdmi4Cmd = "";
 		public const string Dp1Cmd = "";
