@@ -8,6 +8,7 @@ using PepperDash.Core;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Core.Devices;
 using PepperDash.Essentials.Core.Routing;
+using PepperDash.Essentials.Core.Queues;
 
 using Crestron.SimplSharp;                          				// For Basic SIMPL# Classes
 using Crestron.SimplSharpPro;                       				// For Basic SIMPL#Pro classes
@@ -20,6 +21,7 @@ using PepperDash.Essentials;
 using PepperDash.Essentials.Core.Config;
 using System.Collections;
 using PepperDash.Essentials.Core.Bridges;
+using Thread = Crestron.SimplSharpPro.CrestronThread.Thread;
 
 
 
@@ -34,7 +36,8 @@ namespace PDT.PanasonicDisplay.EPI
         /// <summary>
         /// The communication device
         /// </summary>
-		public IBasicCommunication Communication { get; private set; }
+        public IBasicCommunication Communication { get; private set; }
+        private readonly GenericQueue _commandQueue;
 
         /// <summary>
         /// This class will gather RX data until it finds the specified delimiter.
@@ -139,6 +142,7 @@ namespace PDT.PanasonicDisplay.EPI
             Config = config; 
 
             Communication = comm;
+            _commandQueue = new GenericQueue(key + "-command-queue", 1000, Thread.eThreadPriority.MediumPriority, 50);
 
 			Init();
 		}
@@ -153,7 +157,7 @@ namespace PDT.PanasonicDisplay.EPI
 			PortGather.LineReceived += this.Port_LineReceived;
 			
             // Constuct the CommunicationMonitor
-            CommunicationMonitor = new GenericCommunicationMonitor(this, Communication, 30000, 120000, 300000, "\x02QPW\x03\x02QMI\x03"); // Query Power
+            CommunicationMonitor = new GenericCommunicationMonitor(this, Communication, 30000, 120000, 300000, "\x02QPW\x03"); // Query Power
 			
             // Define the input ports 
 			InputPorts.Add(new RoutingInputPort(RoutingPortNames.HdmiIn1, eRoutingSignalType.Audio | eRoutingSignalType.Video,
@@ -307,7 +311,12 @@ namespace PDT.PanasonicDisplay.EPI
 		{
 			if (Debug.Level == 2)
 				Debug.Console(2, this, "Send: '{0}'", ComTextHelper.GetEscapedText(s));
-			Communication.SendText(s);
+            _commandQueue.Enqueue(new PanasonicCommand
+            {
+                Coms = Communication,
+                Message = s,
+            });
+			//Communication.SendText(s);
 		}
 
         /// <summary>
@@ -725,4 +734,23 @@ namespace PDT.PanasonicDisplay.EPI
 
 		#endregion
 	}
+
+    public class PanasonicCommand : IQueueMessage
+    {
+        public IBasicCommunication Coms { get; set; }
+        public string Message { get; set; }
+
+        public void Dispatch()
+        {
+            if (Coms == null || String.IsNullOrEmpty(Message))
+                return;
+
+            Coms.SendText(Message);
+        }
+
+        public override string ToString()
+        {
+            return Message;
+        }
+    }
 }
