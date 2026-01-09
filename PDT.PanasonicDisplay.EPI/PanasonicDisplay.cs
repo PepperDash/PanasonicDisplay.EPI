@@ -101,7 +101,7 @@ namespace PDT.PanasonicDisplay.EPI
 		public const string VideoMuteOffCmd = "\x02VMT:0\x03";
 		public const string VideoMutePartialCmd = "\x02VMT:";
 		public const string VideoMutePoll = "\x02QVM\x03";
-
+        public const string PollPower = "\x02QPW\x03";
 		public const string PollInput = "\x02QMI\x03";
 		#endregion
 
@@ -157,7 +157,7 @@ namespace PDT.PanasonicDisplay.EPI
 			PortGather.LineReceived += this.Port_LineReceived;
 			
             // Constuct the CommunicationMonitor
-            CommunicationMonitor = new GenericCommunicationMonitor(this, Communication, 30000, 120000, 300000, "\x02QPW\x03"); // Query Power
+            CommunicationMonitor = new GenericCommunicationMonitor(this, Communication, 30000, 120000, 300000, Poll); // Query Power
 			
             // Define the input ports 
 			InputPorts.Add(new RoutingInputPort(RoutingPortNames.HdmiIn1, eRoutingSignalType.Audio | eRoutingSignalType.Video,
@@ -318,6 +318,12 @@ namespace PDT.PanasonicDisplay.EPI
             });
 			//Communication.SendText(s);
 		}
+
+        void Poll()
+        {
+            Send(PollPower);
+            Send(PollInput);
+        }
 
         /// <summary>
         /// Power on the display
