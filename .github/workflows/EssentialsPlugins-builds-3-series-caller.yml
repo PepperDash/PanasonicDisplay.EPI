@@ -10,8 +10,7 @@ jobs:
     uses: PepperDash/workflow-templates/.github/workflows/essentialsplugins-getversion.yml@main
     secrets: inherit
   build-3Series:
-    # uses: PepperDash/workflow-templates/.github/workflows/essentialsplugins-3Series-builds.yml@main
-    uses: PepperDash/workflow-templates/.github/workflows/essentialsplugins-3Series-builds.yml@3series-copy-output-fix
+    uses: PepperDash/workflow-templates/.github/workflows/essentialsplugins-3Series-builds.yml@main
     secrets: inherit
     needs: getVersion
     if: needs.getVersion.outputs.newVersion == 'true'
