@@ -24,3 +24,24 @@ C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestr
 C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\obj\Debug\PDT.PanasonicDisplay.EPI.dll
 C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\obj\Debug\PDT.PanasonicDisplay.EPI.pdb
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\PDT.PanasonicDisplay.EPI.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\PDT.PanasonicDisplay.EPI.pdb
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.DeviceSupport.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpNewtonsoft.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpReflectionInterface.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpTimerEventInterface.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Lighting.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpCWSHelperInterface.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpSQLHelperInterface.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Fusion.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Shades.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Remotes.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.EthernetCommunications.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.ThreeSeriesCards.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.UI.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Gateways.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.GeneralIO.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.DM.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\obj\Debug\ResolveAssemblyReference.cache
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\obj\Debug\PDT.PanasonicDisplay.EPI.dll
+C:\_pd-github\pd\PanasonicDisplay.EPI\src\obj\Debug\PDT.PanasonicDisplay.EPI.pdb

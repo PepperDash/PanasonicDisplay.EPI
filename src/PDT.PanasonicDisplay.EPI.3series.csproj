@@ -106,7 +106,7 @@
     <Compile Include="PanasonicDisplay.cs" />
     <Compile Include="PanasonicDisplayConfigObject.cs" />
     <Compile Include="PanasonicDisplayJoinMap.cs" />
-    <Compile Include="PluginFactory.cs" />
+    <Compile Include="PanasonicDisplayFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>
