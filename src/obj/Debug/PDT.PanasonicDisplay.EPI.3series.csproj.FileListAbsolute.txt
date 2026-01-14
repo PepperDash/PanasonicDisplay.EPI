@@ -1,0 +1,26 @@
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\PDT.PanasonicDisplay.EPI.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\PDT.PanasonicDisplay.EPI.pdb
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.DeviceSupport.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Essentials Devices Common.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\PepperDash_Core.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\PepperDash_Essentials_Core.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\PepperDash_Essentials_DM.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\PepperDashEssentials.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpNewtonsoft.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpReflectionInterface.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpTimerEventInterface.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Lighting.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpCWSHelperInterface.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\SimplSharpSQLHelperInterface.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Fusion.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Shades.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Remotes.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.EthernetCommunications.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.ThreeSeriesCards.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.UI.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.Gateways.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.GeneralIO.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\bin\Debug\Crestron.SimplSharpPro.DM.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\obj\Debug\PDT.PanasonicDisplay.EPI.dll
+C:\Users\andrew\PDT\Essentials Plugins\PanasonicDisplay.EPI\src\obj\Debug\PDT.PanasonicDisplay.EPI.pdb
