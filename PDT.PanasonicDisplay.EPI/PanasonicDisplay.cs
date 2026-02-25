@@ -94,10 +94,10 @@ namespace PDT.PanasonicDisplay.EPI
 		public const string SelectIrCmd = "";
 		public const string ExitIrCmd = "";
 
-		public const string VideoMuteOnCmd = "\02VMT:1\03";
-		public const string VideoMuteOffCmd = "\02VMT:0\03";
+		public const string VideoMuteOnCmd = "\x02VMT:1\x03";
+		public const string VideoMuteOffCmd = "\x02VMT:0\x03";
 		public const string VideoMutePartialCmd = "\x02VMT:";
-		public const string VideoMutePoll = "\02QVM\03";
+		public const string VideoMutePoll = "\x02QVM\x03";
 
 		public const string PollInput = "\x02QMI\x03";
 		#endregion
@@ -118,7 +118,7 @@ namespace PDT.PanasonicDisplay.EPI
 			set
 			{
 				_VideoIsMuted = value;
-
+                VideoIsMutedFeedback.FireUpdate();
 			}
 		}
 		public BoolFeedback VideoIsMutedFeedback;
@@ -215,7 +215,7 @@ namespace PDT.PanasonicDisplay.EPI
 		{
 			if (Debug.Level == 2)
 				Debug.Console(2, this, "Received: '{0}'", ComTextHelper.GetEscapedText(args.Text));
-			char[] trimChars = { '\x02', '\x03' };
+			char[] trimChars = { '\x02', '\x03' }; //QVM:0
 			var FB = args.Text.Trim(trimChars);
 			Debug.Console(2, this, "Received cmd: '{0}'", FB);
 			switch (FB)
@@ -288,12 +288,12 @@ namespace PDT.PanasonicDisplay.EPI
 					}
 				case "QVM:1":
 					{
-						VideoIsMuted = true;
+                        VideoIsMuted = true;
 						break;
 					}
 				case "QVM:0":
 					{
-						VideoIsMuted = false;
+                        VideoIsMuted = false;
 						break;
 					}
 			}
@@ -658,14 +658,15 @@ namespace PDT.PanasonicDisplay.EPI
 
             PowerIsOnFeedback.LinkInputSig(trilist.BooleanInput[joinMap.PowerOn.JoinNumber]);
 
-            int count = 1;
+            int count = 0;
             var displayBase = this as PepperDash.Essentials.Core.DisplayBase;
             foreach (var input in InputPorts)
             {
                 //displayDevice.InputKeys.Add(input.Key.ToString());
                 //var tempKey = InputKeys.ElementAt(count - 1);
-                trilist.SetSigTrueAction((ushort)(joinMap.InputSelectOffset.JoinNumber + count), () => { ExecuteSwitch(InputPorts[input.Key.ToString()].Selector); });
-                Debug.Console(2, this, "Setting Input Select Action on Digital Join {0} to Input: {1}", joinMap.InputSelectOffset.JoinNumber + count, InputPorts[input.Key.ToString()].Key.ToString());
+                var port = InputPorts[input.Key.ToString()];
+                trilist.SetSigTrueAction((ushort)(joinMap.InputSelectOffset.JoinNumber + count), () => { ExecuteSwitch(port.Selector); });
+                Debug.Console(2, this, "Setting Input Select Action on Digital Join {0} to Input: {1}", joinMap.InputSelectOffset.JoinNumber + count, port.Key.ToString());
                 trilist.StringInput[(ushort)(joinMap.InputNamesOffset.JoinNumber + count)].StringValue = input.Key.ToString();
                 count++;
             }
