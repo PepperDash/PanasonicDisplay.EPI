@@ -28,7 +28,7 @@ using Thread = Crestron.SimplSharpPro.CrestronThread.Thread;
 namespace PDT.PanasonicDisplay.EPI
 {
     /// <summary>
-    /// 
+    /// Essentials plugin device for Panasonic TH series displays.
     /// </summary>
     [Description("Panasonic TH series Display")]
 	public class PanasonicDisplay : TwoWayDisplayBase, IBasicVolumeWithFeedback, ICommunicationMonitor, IBridgeAdvanced
