@@ -1,8 +1,17 @@
-PDT.PanasonicDisplay.EPI/bin/
-PDT.PanasonicDisplay.EPI/obj/Debug/ResolveAssemblyReference.cache
-PDT.PanasonicDisplay.EPI/obj/Debug/PDT.PanasonicDisplay.EPI.pdb
-PDT.PanasonicDisplay.EPI/obj/Debug/PDT.PanasonicDisplay.EPI.dll
-PDT.PanasonicDisplay.EPI/obj/Debug/PDT.PanasonicDisplay.EPI.csproj.FileListAbsolute.txt
-PDT.PanasonicDisplay.EPI/bin/Debug/
-PDT.PanasonicDisplay.EPI/bin/Release/
+# Build output
+[Bb]in/
+[Oo]bj/
+output/
 packages/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Crestron / Essentials build artifacts
+*.cplz
+*.cpz
