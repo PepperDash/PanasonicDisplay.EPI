@@ -8,6 +8,7 @@ using PepperDash.Core;
 using PepperDash.Core.Logging;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Core.Devices;
+using PepperDash.Essentials.Devices.Common.Displays;
 using PepperDash.Essentials.Core.Routing;
 using PepperDash.Essentials.Core.Queues;
 
@@ -644,7 +645,7 @@ namespace PDT.PanasonicDisplay.EPI
             InputNumberFeedback.LinkInputSig(trilist.UShortInput[joinMap.InputSelect.JoinNumber]);
 
             // Two way feedbacks
-            var twoWayDisplay = this as PepperDash.Essentials.Core.TwoWayDisplayBase;
+            var twoWayDisplay = this as PepperDash.Essentials.Devices.Common.Displays.TwoWayDisplayBase;
             if (twoWayDisplay != null)
             {
                 trilist.SetBool(joinMap.IsTwoWayDisplay.JoinNumber, true);
@@ -673,7 +674,7 @@ namespace PDT.PanasonicDisplay.EPI
             PowerIsOnFeedback.LinkInputSig(trilist.BooleanInput[joinMap.PowerOn.JoinNumber]);
 
             int count = 0;
-            var displayBase = this as PepperDash.Essentials.Core.DisplayBase;
+            var displayBase = this as PepperDash.Essentials.Devices.Common.Displays.DisplayBase;
             foreach (var input in InputPorts)
             {
                 //displayDevice.InputKeys.Add(input.Key.ToString());
