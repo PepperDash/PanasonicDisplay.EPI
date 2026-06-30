@@ -98,3 +98,83 @@ joins. Joins are offset by the `joinStart` provided to the bridge.
 
 For detailed documentation about how Essentials plugins work, see the Essentials Wiki
 [Plugins](https://pepperdash.github.io/Essentials/docs/Plugins.html) article.
+<!-- START Minimum Essentials Framework Versions -->
+### Minimum Essentials Framework Versions
+
+- 2.36.5
+<!-- END Minimum Essentials Framework Versions -->
+<!-- START Config Example -->
+### Config Example
+
+```json
+{
+    "key": "GeneratedKey",
+    "uid": 1,
+    "name": "GeneratedName",
+    "type": "panasonicDisplay",
+    "group": "Group",
+    "properties": {}
+}
+```
+<!-- END Config Example -->
+<!-- START Supported Types -->
+### Supported Types
+
+- panasonicDisplay
+- panasonicThDisplay
+<!-- END Supported Types -->
+<!-- START Join Maps -->
+
+<!-- END Join Maps -->
+<!-- START Interfaces Implemented -->
+### Interfaces Implemented
+
+- IBasicVolumeWithFeedback
+- ICommunicationMonitor
+- IBridgeAdvanced
+<!-- END Interfaces Implemented -->
+<!-- START Base Classes -->
+### Base Classes
+
+- DisplayControllerJoinMap
+- TwoWayDisplayBase
+<!-- END Base Classes -->
+<!-- START Public Methods -->
+### Public Methods
+
+- public void InputHdmi1()
+- public void InputHdmi2()
+- public void InputHdmi3()
+- public void InputHdmi4()
+- public void InputDisplayPort1()
+- public void InputDisplayPort2()
+- public void InputDvi1()
+- public void InputVideo1()
+- public void InputVga()
+- public void InputRgb()
+- public void VideoMuteOff()
+- public void VideoMuteOn()
+- public void VideoMuteToggle()
+- public void MuteOff()
+- public void MuteOn()
+- public void MuteToggle()
+- public void VolumeDown(bool pressRelease)
+- public void VolumeUp(bool pressRelease)
+- public void LinkToApi(BasicTriList trilist, uint joinStart, string joinMapKey, EiscApiAdvanced bridge)
+- public void Dispatch()
+<!-- END Public Methods -->
+<!-- START Bool Feedbacks -->
+### Bool Feedbacks
+
+- VideoIsMutedFeedback
+- MuteFeedback
+<!-- END Bool Feedbacks -->
+<!-- START Int Feedbacks -->
+### Int Feedbacks
+
+- InputNumberFeedback
+- VolumeLevelFeedback
+<!-- END Int Feedbacks -->
+<!-- START String Feedbacks -->
+
+<!-- END String Feedbacks -->
