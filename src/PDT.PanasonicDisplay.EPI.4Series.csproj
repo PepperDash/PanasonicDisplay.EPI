@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectType>ProgramLibrary</ProjectType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>PDT.PanasonicDisplay.EPI</RootNamespace>
+    <AssemblyName>PDT.PanasonicDisplay.EPI</AssemblyName>
+    <Deterministic>false</Deterministic>
+
+    <AssemblyTitle>PDT.PanasonicDisplay.EPI</AssemblyTitle>
+    <Company>PepperDash Technology</Company>
+    <Description>This software is a plugin designed to work as a part of PepperDash Essentials for Crestron control processors. This plugin allows for control of Panasonic TH series displays.</Description>
+    <Copyright>Copyright 2025</Copyright>
+
+    <!-- Version is managed by Directory.Build.props and the release tooling. -->
+    <Version>1.0.0-local</Version>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <InformationalVersion>$(Version)</InformationalVersion>
+
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+
+    <Authors>PepperDash Technology</Authors>
+
+    <!-- Preserve the EXISTING NuGet package ID published for this EPI. -->
+    <PackageId>PepperDash.Essentials.Plugin.PanasonicDisplay</PackageId>
+    <PackageProjectUrl>https://github.com/PepperDash/epi-panasonic-display</PackageProjectUrl>
+
+    <PackageTags>crestron 4series panasonic display</PackageTags>
+  </PropertyGroup>
+
+  <!-- SERIES4 is defined for all configurations so the v2 build path is always
+       selected, including the Release configuration used for main-branch releases. -->
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);SERIES4</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Properties\**" />
+    <EmbeddedResource Remove="Properties\**" />
+    <None Remove="Properties\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="PDT.PanasonicDisplay.EPI.projectinfo" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PepperDashEssentials" Version="2.36.5">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

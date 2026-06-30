@@ -16,7 +16,13 @@ namespace PDT.PanasonicDisplay.EPI
         /// </summary>
         public PanasonicDisplayFactory()
         {
+#if SERIES4
+            // 4-series build references Essentials v2.x
+            MinimumEssentialsFrameworkVersion = "2.36.5";
+#else
+            // 3-series build references Essentials v1.x
             MinimumEssentialsFrameworkVersion = "1.5.0";
+#endif
 
              TypeNames = new List<string>() {"panasonicDisplay", "panasonicThDisplay"};
         }
@@ -40,7 +46,7 @@ namespace PDT.PanasonicDisplay.EPI
             }
             else
             {
-                Debug.Console(0, Debug.ErrorLogLevel.Warning, "Unable to create Communication device for device with key '{0}'", dc.Key);
+                Debug.LogWarning("Unable to create Communication device for device with key '{0}'", dc.Key);
                 return null;
             }
         }
