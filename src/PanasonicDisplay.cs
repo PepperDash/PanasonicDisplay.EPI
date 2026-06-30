@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 
 using PepperDash.Core;
+using PepperDash.Core.Logging;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Core.Devices;
+using PepperDash.Essentials.Devices.Common.Displays;
 using PepperDash.Essentials.Core.Routing;
 using PepperDash.Essentials.Core.Queues;
 
@@ -172,7 +174,7 @@ namespace PDT.PanasonicDisplay.EPI
             // Define the feedback Funcs
 			VolumeLevelFeedback = new IntFeedback(() => { return _VolumeLevel; });
 			MuteFeedback = new BoolFeedback(() => _IsMuted);
-			InputNumberFeedback = new IntFeedback(() => { Debug.Console(2, this, "CHange Input number {0}", InputNumber); return InputNumber; });
+			InputNumberFeedback = new IntFeedback(() => { this.LogVerbose("Change Input number {0}", InputNumber); return InputNumber; });
 			VideoIsMutedFeedback = new BoolFeedback(() => { return VideoIsMuted; });
 
             // Set the warmup time
@@ -192,7 +194,7 @@ namespace PDT.PanasonicDisplay.EPI
 		{
 			Communication.Connect();
 
-			CommunicationMonitor.StatusChange += (o, a) => { Debug.Console(2, this, "Communication monitor state: {0}", CommunicationMonitor.Status); };
+			CommunicationMonitor.StatusChange += (o, a) => { this.LogVerbose("Communication monitor state: {0}", CommunicationMonitor.Status); };
 			CommunicationMonitor.Start();
 
             // Call the base method in case any steps need to happen there
@@ -217,11 +219,10 @@ namespace PDT.PanasonicDisplay.EPI
         /// <param name="args"></param>
 		void Port_LineReceived(object dev, GenericCommMethodReceiveTextArgs args)
 		{
-			if (Debug.Level == 2)
-				Debug.Console(2, this, "Received: '{0}'", ComTextHelper.GetEscapedText(args.Text));
+			this.LogVerbose("Received: '{0}'", ComTextHelper.GetEscapedText(args.Text));
 			char[] trimChars = { '\x02', '\x03' }; //QVM:0
 			var FB = args.Text.Trim(trimChars);
-			Debug.Console(2, this, "Received cmd: '{0}'", FB);
+			this.LogVerbose("Received cmd: '{0}'", FB);
 			switch (FB)
 			{
 				case "PON":
@@ -309,8 +310,7 @@ namespace PDT.PanasonicDisplay.EPI
         /// <param name="s"></param>
 		void Send(string s)
 		{
-			if (Debug.Level == 2)
-				Debug.Console(2, this, "Send: '{0}'", ComTextHelper.GetEscapedText(s));
+			this.LogVerbose("Send: '{0}'", ComTextHelper.GetEscapedText(s));
             _commandQueue.Enqueue(new PanasonicCommand
             {
                 Coms = Communication,
@@ -363,7 +363,7 @@ namespace PDT.PanasonicDisplay.EPI
 				// Fake cool-down cycle
 				CooldownTimer = new CTimer(o =>
 					{
-						Debug.Console(2, this, "Cooldown timer ending");
+						this.LogVerbose("Cooldown timer ending");
 						_IsCoolingDown = false;
 						IsCoolingDownFeedback.FireUpdate();
 					}, CooldownTime);
@@ -493,7 +493,7 @@ namespace PDT.PanasonicDisplay.EPI
 				{
 					if (tempSelector != null)
 						(tempSelector).Invoke();
-					else { Debug.Console(1, this, "WARNING: ExecuteSwitch cannot handle type {0}", selector.GetType()); }
+					else { this.LogDebug("WARNING: ExecuteSwitch cannot handle type {0}", selector.GetType()); }
 				}, WarmupTime);
 			}
 			else
@@ -501,7 +501,7 @@ namespace PDT.PanasonicDisplay.EPI
 				if (selector is Action)
 					(selector as Action).Invoke();
 				else
-					Debug.Console(1, this, "WARNING: ExecuteSwitch cannot handle type {0}", selector.GetType());
+					this.LogDebug("WARNING: ExecuteSwitch cannot handle type {0}", selector.GetType());
 
 			}
 		}
@@ -514,7 +514,7 @@ namespace PDT.PanasonicDisplay.EPI
 		{
 			var levelString = string.Format("{0}{1:X3}\x03", VolumeLevelPartialCmd, level);
 
-			//Debug.Console(2, this, "Volume:{0}", ComTextHelper.GetEscapedText(levelString));
+			//this.LogVerbose("Volume:{0}", ComTextHelper.GetEscapedText(levelString));
 			_VolumeLevel = level;
 			VolumeLevelFeedback.FireUpdate();
 		}
@@ -630,8 +630,8 @@ namespace PDT.PanasonicDisplay.EPI
                 bridge.AddJoinMap(Key, joinMap);
             }
 
-            Debug.Console(1, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));
-            Debug.Console(0, "Linking to Display: {0}", Name);
+            Debug.LogDebug("Linking to Trilist '{0}'", trilist.ID.ToString("X"));
+            Debug.LogInformation("Linking to Display: {0}", Name);
 
             trilist.StringInput[joinMap.Name.JoinNumber].StringValue = Name;
 
@@ -645,7 +645,7 @@ namespace PDT.PanasonicDisplay.EPI
             InputNumberFeedback.LinkInputSig(trilist.UShortInput[joinMap.InputSelect.JoinNumber]);
 
             // Two way feedbacks
-            var twoWayDisplay = this as PepperDash.Essentials.Core.TwoWayDisplayBase;
+            var twoWayDisplay = this as PepperDash.Essentials.Devices.Common.Displays.TwoWayDisplayBase;
             if (twoWayDisplay != null)
             {
                 trilist.SetBool(joinMap.IsTwoWayDisplay.JoinNumber, true);
@@ -674,19 +674,19 @@ namespace PDT.PanasonicDisplay.EPI
             PowerIsOnFeedback.LinkInputSig(trilist.BooleanInput[joinMap.PowerOn.JoinNumber]);
 
             int count = 0;
-            var displayBase = this as PepperDash.Essentials.Core.DisplayBase;
+            var displayBase = this as PepperDash.Essentials.Devices.Common.Displays.DisplayBase;
             foreach (var input in InputPorts)
             {
                 //displayDevice.InputKeys.Add(input.Key.ToString());
                 //var tempKey = InputKeys.ElementAt(count - 1);
                 var port = InputPorts[input.Key.ToString()];
                 trilist.SetSigTrueAction((ushort)(joinMap.InputSelectOffset.JoinNumber + count), () => { ExecuteSwitch(port.Selector); });
-                Debug.Console(2, this, "Setting Input Select Action on Digital Join {0} to Input: {1}", joinMap.InputSelectOffset.JoinNumber + count, port.Key.ToString());
+                this.LogVerbose("Setting Input Select Action on Digital Join {0} to Input: {1}", joinMap.InputSelectOffset.JoinNumber + count, port.Key.ToString());
                 trilist.StringInput[(ushort)(joinMap.InputNamesOffset.JoinNumber + count)].StringValue = input.Key.ToString();
                 count++;
             }
 
-            Debug.Console(2, this, "Setting Input Select Action on Analog Join {0}", joinMap.InputSelect);
+            this.LogVerbose("Setting Input Select Action on Analog Join {0}", joinMap.InputSelect);
             trilist.SetUShortSigAction(joinMap.InputSelect.JoinNumber, (a) =>
             {
                 if (a == 0)
@@ -702,7 +702,7 @@ namespace PDT.PanasonicDisplay.EPI
                     PowerToggle();
 
                 }
-                Debug.Console(2, this, "InputChange {0}", a);
+                this.LogVerbose("InputChange {0}", a);
 
 
             });
@@ -734,7 +734,7 @@ namespace PDT.PanasonicDisplay.EPI
         void CurrentInputFeedback_OutputChange(object sender, FeedbackEventArgs e)
         {
 
-            Debug.Console(0, this, "CurrentInputFeedback_OutputChange {0}", e.StringValue);
+            this.LogInformation("CurrentInputFeedback_OutputChange {0}", e.StringValue);
 
         }
 
